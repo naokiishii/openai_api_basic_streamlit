@@ -33,7 +33,7 @@ def open_ai_func():
         Your task is to write a blog on any topic system provides to you. Make sure to write in a format that works for Medium.
 
         Topic: {topic}
-        Additiona pointers: {additional_text}
+        Additional pointers: {additional_text}
         """
 
         response = client.completions.create(
