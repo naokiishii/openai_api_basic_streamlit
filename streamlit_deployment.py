@@ -28,17 +28,23 @@ def open_ai_func():
 
     def generate_blog(topic, additional_text):
 
-        prompt = f"""
-        You are a copy writer with years of experience writing impactful blogs that converge and help elevate brands.
-        Your task is to write a blog on any topic system provides to you. Make sure to write in a format that works for Medium.
+        #prompt = f"""
+        #You are a copy writer with years of experience writing impactful blogs that converge and help elevate brands.
+        #Your task is to write a blog on any topic system provides to you. Make sure to write in a format that works for Medium.
 
-        Topic: {topic}
-        Additional pointers: {additional_text}
-        """
+        #Topic: {topic}
+        #Additional pointers: {additional_text}
+        #"""
 
-        response = client.completions.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=prompt,
+        prompt = [
+            {"role": "system", "content": "You are a copy writer with years of experience writing impactful blogs that converge and help elevate brands. Your task is to write a blog on any topic system provides to you. Make sure to write in a format that works for Medium."},
+            {"role": "user", "content": f"{topic} : Additional pointers: {additional_text}"}
+        ]
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            #prompt=prompt,
+            messages=prompt,
             max_tokens=700,
             temperature=0.9
         )
@@ -48,9 +54,11 @@ def open_ai_func():
     def generate_images(prompt, number_of_images):
 
         response = client.images.generate(
+            model="dall-e-3",
             prompt=prompt,
             n=number_of_images,
-            size="512x512"
+            size="1024x1024",
+            quality="standard",
         )
 
         return response
@@ -71,7 +79,7 @@ def open_ai_func():
         if st.button("Generate Blog"):
             with st.spinner("Generating..."):
                 response = generate_blog(topic, additional_text)
-                st.text_area("Generated Blog", value=response.choices[0].text, height=700)
+                st.text_area("Generated Blog", value=response.choices[0].message.content, height=700)
 
     elif ai_app == "Image Generator":
         st.header("Image Generator")
